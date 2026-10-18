@@ -9,19 +9,26 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import Navigation from "./components/ui/navigation";
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
+import { createModal } from "@rabby-wallet/rabbykit";
+import { createConfig, http } from "@wagmi/core";
+import { hardhat } from "@wagmi/core/chains";
+
+export const config = createConfig(
+{
+  chains: [hardhat],
+    transports: {
+      [hardhat.id]: http(),
+      
+    },
+  }
+);
+
+export const rabbykit = createModal({
+  wagmi: config,
+});
+
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -40,9 +47,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
+// 레이아웃을 시작점 앱 내용을 넣어줌 라우트 인덱스를 outlet으로 넣어줌
 export default function App() {
-  return <Outlet />;
+  return(
+  <div className="py-20 px-5">  
+   <Navigation /> 
+   <Outlet />
+  </div> 
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
